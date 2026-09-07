@@ -74,12 +74,11 @@ SAMPLE_TRANSCRIPTS = [
 ]
 
 
-def seed():
-    Base.metadata.create_all(bind=engine)
+def seed_data():
     db = SessionLocal()
     try:
-        if db.query(models.User).first():
-            print("Database already seeded, skipping. (Delete fireflies.db to reseed.)")
+        if db.query(models.Meeting).first():
+            print("Database already seeded, skipping.")
             return
 
         user = models.User(name="Alex Carter", email="alex@fireflies-clone.dev")
@@ -140,4 +139,4 @@ def seed():
 
 
 if __name__ == "__main__":
-    seed()
+    seed_data()

@@ -7,11 +7,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .database import Base, engine
 from .routers import meetings, action_items, search
+from .seed import seed_data
 
 # Creates all tables defined in models.py if they don't already exist.
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Fireflies Clone API")
+
+@app.on_event("startup")
+def on_startup():
+    seed_data()
 
 # Allows the Next.js frontend (running on a different port) to call this API.
 app.add_middleware(
