@@ -13,12 +13,19 @@ export default function MeetingsPage() {
   const [sort, setSort] = useState("recent");
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
+    setError(null);
     try {
       const data = await api.listMeetings({ q, participant, sort });
       setMeetings(data);
+    } catch (err) {
+      console.error("Failed to load meetings:", err);
+      setError(
+        "Couldn't reach the server. It may be waking up from idle — this can take up to a minute on first load."
+      );
     } finally {
       setLoading(false);
     }
@@ -73,6 +80,13 @@ export default function MeetingsPage() {
 
         {loading ? (
           <p className="text-sm text-gray-400">Loading meetings...</p>
+        ) : error ? (
+          <div className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            {error}{" "}
+            <button onClick={load} className="underline font-medium ml-1">
+              Retry
+            </button>
+          </div>
         ) : meetings.length === 0 ? (
           <p className="text-sm text-gray-400">No meetings found.</p>
         ) : (
